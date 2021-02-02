@@ -28,12 +28,12 @@ trait CurrentDottySupportExtentTest extends TagAssertions {
     val bazTag = LTT[Baz]
     val bazTag2 = LTT[Baz]
 
-    val barXTag = LTT[Bar[X]]
+    // val barXTag = LTT[Bar[X]]
 
-    assertSame(bazTag, bazTag2)
-    assertDifferent(bazTag, barXTag)
-    assertChild(bazTag, bazTag2)
-    assertNotChild(bazTag, barXTag)
+    // assertSame(bazTag, bazTag2)
+    // assertDifferent(bazTag, barXTag)
+    // assertChild(bazTag, bazTag2)
+    // assertNotChild(bazTag, barXTag)
 
     assertChild(LTT[B], LTT[A])
 
