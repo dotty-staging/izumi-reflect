@@ -12,7 +12,7 @@ abstract class FullDbInspector(protected val shift: Int) extends InspectorBase {
   self =>
 
   // @formatter:off
-  import qctx.reflect.{given, _}
+  import qctx.reflect._
   private lazy val inspector = new Inspector(0) { val qctx: FullDbInspector.this.qctx.type = FullDbInspector.this.qctx }
   // @formatter:on
 

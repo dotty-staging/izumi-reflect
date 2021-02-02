@@ -128,7 +128,7 @@ object Tag {
     refinedTag(lubClass, intersection, structType, Map.empty)
   }
 
-  inline implicit final def tagFromTagMacro[T]: Tag[T] = Tag(classOf[Any], Inspect.inspect[T])
+  transparent inline implicit final def tagFromTagMacro[T]: Tag[T] = Tag(classOf[Any], Inspect.inspect[T])
 }
 
 /**
@@ -238,7 +238,7 @@ object WeakTag extends WeakTagInstances1 {
   implicit def weakTagFromTag[T: Tag]: WeakTag[T] = WeakTag(Tag[T].closestClass, Tag[T].tag)
 }
 trait WeakTagInstances1 {
-//    inline implicit final def weakTagFromWeakTypeTag[T](implicit l: LTag.Weak[T]): WeakTag[T] = WeakTag(classOf[Any], l.tag)
-  inline implicit final def weakTagFromWeakTypeTag[T]: WeakTag[T] = scala.compiletime.error("not implemented")
+//    transparent inline implicit final def weakTagFromWeakTypeTag[T](implicit l: LTag.Weak[T]): WeakTag[T] = WeakTag(classOf[Any], l.tag)
+  transparent inline implicit final def weakTagFromWeakTypeTag[T]: WeakTag[T] = scala.compiletime.error("not implemented")
 }
 

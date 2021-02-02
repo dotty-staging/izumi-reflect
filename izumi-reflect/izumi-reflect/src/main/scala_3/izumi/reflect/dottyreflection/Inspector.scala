@@ -10,7 +10,7 @@ abstract class Inspector(protected val shift: Int) extends InspectorBase {
   self =>
 
   // @formatter:off
-  import qctx.reflect.{given, _}
+  import qctx.reflect._
   // @formatter:on
 
   private def next() = new Inspector(shift + 1) {

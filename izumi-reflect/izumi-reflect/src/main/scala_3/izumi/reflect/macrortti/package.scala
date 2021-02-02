@@ -70,15 +70,23 @@ package object macrortti {
   }
 
 //   simple materializers
-  inline def LTT[T]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_]`[T[_]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[+_]`[T[+ _]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[A,B,_>:B<:A]`[A, B <: A, T[_ >: B <: A]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_[_]]`[T[_[_]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_[_[_]]]`[T[_[_[_]]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_,_]`[T[_, _]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_[_,_]]`[T[_[_, _]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_[_,_],_,_]`[T[_[_, _], _, _]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_[_],_[_]]`[T[_[_], _[_]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
-  inline def `LTT[_[_[_],_[_]]]`[T[_[_[_], _[_]]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+//
+// FIXME: Remove `transparent`
+//        There used to be a missing bounds check in `inline`/`transparent inline`
+//        (see https://github.com/lampepfl/dotty/issues/10552). Now the check is performed
+//        for `inline` not for `transparent inline`. `transparent` was added to keep the unchecked
+//        behaviour described in issue 10552.
+//        In this project a couple of tests pass types that do not have the correct bounds.
+//        It is unclear if those could lead to unsound code, it depends on what `inspect` does with the type.
+  transparent inline def LTT[T]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_]`[T[_]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[+_]`[T[+ _]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[A,B,_>:B<:A]`[A, B <: A, T[_ >: B <: A]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_[_]]`[T[_[_]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_[_[_]]]`[T[_[_[_]]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_,_]`[T[_, _]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_[_,_]]`[T[_[_, _]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_[_,_],_,_]`[T[_[_, _], _, _]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_[_],_[_]]`[T[_[_], _[_]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
+  transparent inline def `LTT[_[_[_],_[_]]]`[T[_[_[_], _[_]]]]: LightTypeTag = dottyreflection.Inspect.inspect[T]
 }
