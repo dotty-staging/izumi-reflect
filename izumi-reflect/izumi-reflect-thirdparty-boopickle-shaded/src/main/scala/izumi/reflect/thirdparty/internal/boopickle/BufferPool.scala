@@ -100,7 +100,7 @@ private[reflect] object BufferPool {
             val aIdx  = allocIdx1.get()
             val rIdx  = releaseIdx1.get()
             val rNext = (rIdx + 1) % entryCount
-            if (rNext != aIdx) {
+            if (rNext != aIdx) then {
               // try to release the buffer
               (bb: java.nio.Buffer).clear()
               pool1(rNext) = bb
@@ -111,7 +111,7 @@ private[reflect] object BufferPool {
             val aIdx  = allocIdx0.get()
             val rIdx  = releaseIdx0.get()
             val rNext = (rIdx + 1) % entryCount
-            if (rNext != aIdx) {
+            if (rNext != aIdx) then {
               // try to release the buffer
               (bb: java.nio.Buffer).clear()
               pool0(rNext) = bb
