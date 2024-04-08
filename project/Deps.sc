@@ -85,7 +85,7 @@ object Izumi {
     )
     private val jsPlatform = PlatformEnv(
       platform = Platform.Js,
-      language = targetScala,
+      language = targetScala.filterNot(_ == Izumi.scala211),
       settings = Seq(
         "coverageEnabled" := false,
         "scalaJSLinkerConfig" in (SettingScope.Project, Platform.Js) := "scalaJSLinkerConfig.value.withModuleKind(ModuleKind.CommonJSModule)".raw
@@ -93,7 +93,7 @@ object Izumi {
     )
     private val nativePlatform = PlatformEnv(
       platform = Platform.Native,
-      language = targetScala,
+      language = targetScala.filterNot(_ == Izumi.scala211), // scala-native abandoned 2.11
       settings = Seq(
         "coverageEnabled" := false
       )
