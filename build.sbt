@@ -39,16 +39,6 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
         case _ => Seq.empty
       }
     },
-    Compile / unmanagedSourceDirectories ++= {
-      val version = scalaVersion.value
-      val crossVersions = crossScalaVersions.value
-      import Ordering.Implicits._
-      val ltEqVersions = crossVersions.map(CrossVersion.partialVersion).filter(_ >= CrossVersion.partialVersion(version)).flatten
-      (Compile / unmanagedSourceDirectories).value.flatMap {
-        case dir if dir.getPath.endsWith("scala") => ltEqVersions.map { case (m, n) => file(dir.getPath + s"-$m.$n-") }
-        case _ => Seq.empty
-      }
-    },
     Test / unmanagedSourceDirectories ++= {
       val version = scalaVersion.value
       val crossVersions = crossScalaVersions.value
@@ -60,13 +50,34 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
       }
     },
     Compile / unmanagedSourceDirectories ++= {
+      val version = scalaVersion.value
+      val crossVersions = crossScalaVersions.value
+      import Ordering.Implicits._
+      val gtEqVersions = crossVersions.map(CrossVersion.partialVersion).filter(_ >= CrossVersion.partialVersion(version)).flatten
+      (Compile / unmanagedSourceDirectories).value.flatMap {
+        case dir if dir.getPath.endsWith("scala") => gtEqVersions.map { case (m, n) => file(dir.getPath + s"-$m.$n-") }
+        case _ => Seq.empty
+      }
+    },
+    Test / unmanagedSourceDirectories ++= {
+      val version = scalaVersion.value
+      val crossVersions = crossScalaVersions.value
+      import Ordering.Implicits._
+      val gtEqVersions = crossVersions.map(CrossVersion.partialVersion).filter(_ >= CrossVersion.partialVersion(version)).flatten
+      (Test / unmanagedSourceDirectories).value.flatMap {
+        case dir if dir.getPath.endsWith("scala") => gtEqVersions.map { case (m, n) => file(dir.getPath + s"-$m.$n-") }
+        case _ => Seq.empty
+      }
+    },
+    Compile / unmanagedSourceDirectories ++= {
       val crossVersions = crossScalaVersions.value
       import Ordering.Implicits._
       val ltEqVersions = crossVersions.map(CrossVersion.partialVersion).sorted.flatten
       def joinV = (_: Product).productIterator.mkString(".")
-      val allRangeVersions = (2 to math.max(2, ltEqVersions.size - 1))
+      val allRangeVersions = (2 to math.max(2, ltEqVersions.size))
         .flatMap(i => ltEqVersions.sliding(i).filter(_.size == i))
         .map(l => (l.head, l.last))
+        .distinct
       CrossVersion.partialVersion(scalaVersion.value).toList.flatMap {
         version =>
           val rangeVersions = allRangeVersions
@@ -83,9 +94,10 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
       import Ordering.Implicits._
       val ltEqVersions = crossVersions.map(CrossVersion.partialVersion).sorted.flatten
       def joinV = (_: Product).productIterator.mkString(".")
-      val allRangeVersions = (2 to math.max(2, ltEqVersions.size - 1))
+      val allRangeVersions = (2 to math.max(2, ltEqVersions.size))
         .flatMap(i => ltEqVersions.sliding(i).filter(_.size == i))
         .map(l => (l.head, l.last))
+        .distinct
       CrossVersion.partialVersion(scalaVersion.value).toList.flatMap {
         version =>
           val rangeVersions = allRangeVersions
@@ -151,6 +163,7 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
       case (_, "2.13.11") => Seq(
         "-release:8",
         "-explaintypes",
+        "-Xsource:3-cross",
         if (insideCI.value) "-Wconf:any:error" else "-Wconf:any:warning",
         "-Wconf:cat=optimizer:warning",
         "-Wconf:cat=other-match-analysis:error",
@@ -212,7 +225,7 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
     crossScalaVersions := Seq(
       "3.2.2",
       "2.13.11",
-      "2.12.17",
+      "2.12.17"
     ),
     scalaVersion := crossScalaVersions.value.head,
     coverageEnabled := false,
@@ -222,7 +235,7 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
     crossScalaVersions := Seq(
       "3.2.2",
       "2.13.11",
-      "2.12.17",
+      "2.12.17"
     ),
     scalaVersion := crossScalaVersions.value.head,
     coverageEnabled := false,
@@ -266,16 +279,6 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         case _ => Seq.empty
       }
     },
-    Compile / unmanagedSourceDirectories ++= {
-      val version = scalaVersion.value
-      val crossVersions = crossScalaVersions.value
-      import Ordering.Implicits._
-      val ltEqVersions = crossVersions.map(CrossVersion.partialVersion).filter(_ >= CrossVersion.partialVersion(version)).flatten
-      (Compile / unmanagedSourceDirectories).value.flatMap {
-        case dir if dir.getPath.endsWith("scala") => ltEqVersions.map { case (m, n) => file(dir.getPath + s"-$m.$n-") }
-        case _ => Seq.empty
-      }
-    },
     Test / unmanagedSourceDirectories ++= {
       val version = scalaVersion.value
       val crossVersions = crossScalaVersions.value
@@ -287,13 +290,34 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       }
     },
     Compile / unmanagedSourceDirectories ++= {
+      val version = scalaVersion.value
+      val crossVersions = crossScalaVersions.value
+      import Ordering.Implicits._
+      val gtEqVersions = crossVersions.map(CrossVersion.partialVersion).filter(_ >= CrossVersion.partialVersion(version)).flatten
+      (Compile / unmanagedSourceDirectories).value.flatMap {
+        case dir if dir.getPath.endsWith("scala") => gtEqVersions.map { case (m, n) => file(dir.getPath + s"-$m.$n-") }
+        case _ => Seq.empty
+      }
+    },
+    Test / unmanagedSourceDirectories ++= {
+      val version = scalaVersion.value
+      val crossVersions = crossScalaVersions.value
+      import Ordering.Implicits._
+      val gtEqVersions = crossVersions.map(CrossVersion.partialVersion).filter(_ >= CrossVersion.partialVersion(version)).flatten
+      (Test / unmanagedSourceDirectories).value.flatMap {
+        case dir if dir.getPath.endsWith("scala") => gtEqVersions.map { case (m, n) => file(dir.getPath + s"-$m.$n-") }
+        case _ => Seq.empty
+      }
+    },
+    Compile / unmanagedSourceDirectories ++= {
       val crossVersions = crossScalaVersions.value
       import Ordering.Implicits._
       val ltEqVersions = crossVersions.map(CrossVersion.partialVersion).sorted.flatten
       def joinV = (_: Product).productIterator.mkString(".")
-      val allRangeVersions = (2 to math.max(2, ltEqVersions.size - 1))
+      val allRangeVersions = (2 to math.max(2, ltEqVersions.size))
         .flatMap(i => ltEqVersions.sliding(i).filter(_.size == i))
         .map(l => (l.head, l.last))
+        .distinct
       CrossVersion.partialVersion(scalaVersion.value).toList.flatMap {
         version =>
           val rangeVersions = allRangeVersions
@@ -310,9 +334,10 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       import Ordering.Implicits._
       val ltEqVersions = crossVersions.map(CrossVersion.partialVersion).sorted.flatten
       def joinV = (_: Product).productIterator.mkString(".")
-      val allRangeVersions = (2 to math.max(2, ltEqVersions.size - 1))
+      val allRangeVersions = (2 to math.max(2, ltEqVersions.size))
         .flatMap(i => ltEqVersions.sliding(i).filter(_.size == i))
         .map(l => (l.head, l.last))
+        .distinct
       CrossVersion.partialVersion(scalaVersion.value).toList.flatMap {
         version =>
           val rangeVersions = allRangeVersions
@@ -378,6 +403,7 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       case (_, "2.13.11") => Seq(
         "-release:8",
         "-explaintypes",
+        "-Xsource:3-cross",
         if (insideCI.value) "-Wconf:any:error" else "-Wconf:any:warning",
         "-Wconf:cat=optimizer:warning",
         "-Wconf:cat=other-match-analysis:error",
@@ -438,7 +464,7 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     crossScalaVersions := Seq(
       "3.2.2",
       "2.13.11",
-      "2.12.17",
+      "2.12.17"
     ),
     scalaVersion := crossScalaVersions.value.head,
     coverageEnabled := false,
@@ -448,7 +474,7 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     crossScalaVersions := Seq(
       "3.2.2",
       "2.13.11",
-      "2.12.17",
+      "2.12.17"
     ),
     scalaVersion := crossScalaVersions.value.head,
     coverageEnabled := false,
@@ -645,7 +671,7 @@ lazy val `izumi-reflect-root` = (project in file("."))
     ),
     ThisBuild / mimaFailOnProblem := true,
     ThisBuild / mimaFailOnNoPrevious := false,
-    libraryDependencies += "io.7mind.izumi.sbt" % "sbtgen_2.13" % "0.0.97" % Provided
+    libraryDependencies += "io.7mind.izumi.sbt" % "sbtgen_2.13" % "0.0.101" % Provided
   )
   .aggregate(
     `izumi-reflect-aggregate`
