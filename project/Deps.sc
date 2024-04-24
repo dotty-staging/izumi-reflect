@@ -225,7 +225,8 @@ object Izumi {
             val removedOpts = Set[Const](
               "-P:kind-projector:underscore-placeholders",
               "-Vimplicits",
-              "-Xsource:3" // FIXME return after dropping 2.11
+              "-Xsource:3", // FIXME return after dropping 2.11 (NB: may cause bincompat issues)
+              "-Xsource:3-cross" // FIXME return after dropping 2.11 (NB: may cause bincompat issues)
             )
             val addedOpts = Seq[Const](
               "-Wconf:msg=nowarn:silent"

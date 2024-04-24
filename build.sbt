@@ -176,7 +176,6 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = project.in(file("izumi-re
       case (_, "2.13.13") => Seq(
         "-release:8",
         "-explaintypes",
-        "-Xsource:3-cross",
         if (insideCI.value) "-Wconf:any:error" else "-Wconf:any:warning",
         "-Wconf:cat=optimizer:warning",
         "-Wconf:cat=other-match-analysis:error",
@@ -398,7 +397,6 @@ lazy val `izumi-reflect` = project.in(file("izumi-reflect/izumi-reflect"))
       case (_, "2.13.13") => Seq(
         "-release:8",
         "-explaintypes",
-        "-Xsource:3-cross",
         if (insideCI.value) "-Wconf:any:error" else "-Wconf:any:warning",
         "-Wconf:cat=optimizer:warning",
         "-Wconf:cat=other-match-analysis:error",
