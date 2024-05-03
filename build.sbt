@@ -102,7 +102,7 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = project.in(file("izumi-re
     },
     Compile / doc / sources := { (isSnapshot.value, scalaVersion.value) match {
       case (_, "3.2.2") => Seq(
-      
+
       )
       case (_, _) => (Compile / doc / sources).value
     } },
@@ -301,7 +301,7 @@ lazy val `izumi-reflect` = project.in(file("izumi-reflect/izumi-reflect"))
     },
     Compile / doc / sources := { (isSnapshot.value, scalaVersion.value) match {
       case (_, "3.2.2") => Seq(
-      
+
       )
       case (_, _) => (Compile / doc / sources).value
     } },
@@ -447,7 +447,7 @@ lazy val `izumi-reflect-root` = (project in file("."))
       "-feature",
       "-unchecked",
       "-deprecation",
-      "-language:higherKinds"
+      // "-language:higherKinds"
     ),
     ThisBuild / javacOptions ++= Seq(
       "-encoding",
@@ -466,14 +466,14 @@ lazy val `izumi-reflect-root` = (project in file("."))
     ThisBuild / organization := "dev.zio",
     sonatypeProfileName := "dev.zio",
     sonatypeSessionName := s"[sbt-sonatype] ${name.value} ${version.value} ${java.util.UUID.randomUUID}",
-    ThisBuild / publishTo := 
+    ThisBuild / publishTo :=
     (if (!isSnapshot.value) {
         sonatypePublishToBundle.value
       } else {
         Some(Opts.resolver.sonatypeSnapshots)
     })
     ,
-    ThisBuild / credentials ++= 
+    ThisBuild / credentials ++=
     {
     val credTarget = Path.userHome / ".sbt" / "secrets" / "credentials.sonatype-nexus.properties"
     if (credTarget.exists) {
@@ -482,7 +482,7 @@ lazy val `izumi-reflect-root` = (project in file("."))
       Seq.empty
     }
     },
-    ThisBuild / credentials ++= 
+    ThisBuild / credentials ++=
     {
     val credTarget = file(".") / ".secrets" / "credentials.sonatype-nexus.properties"
     if (credTarget.exists) {
