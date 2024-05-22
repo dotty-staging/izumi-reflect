@@ -446,8 +446,7 @@ lazy val `izumi-reflect-root` = (project in file("."))
       "UTF-8",
       "-feature",
       "-unchecked",
-      "-deprecation",
-      "-language:higherKinds"
+      "-deprecation"
     ),
     ThisBuild / javacOptions ++= Seq(
       "-encoding",

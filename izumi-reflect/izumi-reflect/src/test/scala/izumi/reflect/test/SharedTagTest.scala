@@ -944,9 +944,9 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
       val t2 = TagK[HigherKindedTypeMember.T[IO[Throwable, *], *]]
       val t3 = TagTK[HigherKindedTypeMember.G]
 
-      val tres1 = combine1[HigherKindedTypeMember.T, IO[Throwable, *], Int](t1, implicitly, implicitly)
-      val tres2 = combine2[HigherKindedTypeMember.T[IO[Throwable, *], *], Int](t2, implicitly)
-      val tres3 = combine1[HigherKindedTypeMember.G, IO[Throwable, *], Int](t3, implicitly, implicitly)
+      val tres1 = combine1[HigherKindedTypeMember.T, IO[Throwable, *], Int](using t1, implicitly, implicitly)
+      val tres2 = combine2[HigherKindedTypeMember.T[IO[Throwable, *], *], Int](using t2, implicitly)
+      val tres3 = combine1[HigherKindedTypeMember.G, IO[Throwable, *], Int](using t3, implicitly, implicitly)
 
       assertSameStrict(tres1.tag, Tag[HigherKindedTypeMember.T[IO[Throwable, *], Int]].tag)
       assertSameStrict(tres2.tag, Tag[HigherKindedTypeMember.T[IO[Throwable, *], Int]].tag)

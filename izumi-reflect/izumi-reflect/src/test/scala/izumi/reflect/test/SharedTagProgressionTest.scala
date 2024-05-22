@@ -158,8 +158,8 @@ abstract class SharedTagProgressionTest extends AnyWordSpec with TagAssertions w
       val t1 = TagTK[HigherKindedTypeMember.T]
       val t2 = TagK[HigherKindedTypeMember.T[IO[Throwable, *], *]]
 
-      val tres1 = combine1[HigherKindedTypeMember.T, IO[Throwable, *], Int](t1, implicitly, implicitly)
-      val tres2 = combine2[HigherKindedTypeMember.T[IO[Throwable, *], *], Int](t2, implicitly)
+      val tres1 = combine1[HigherKindedTypeMember.T, IO[Throwable, *], Int](using t1, implicitly, implicitly)
+      val tres2 = combine2[HigherKindedTypeMember.T[IO[Throwable, *], *], Int](using t2, implicitly)
 
       broken {
         assertChildStrict(Tag[Unit].tag, tres1.tag)
