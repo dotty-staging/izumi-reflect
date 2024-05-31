@@ -73,7 +73,7 @@ class TagMacro(val c: blackbox.Context) {
     val ctor = ltagMacro.unpackArgStruct(argStruct)
     if (ReflectionUtil.allPartsStrong(ctor)) {
       logger.log(s"HK: found Strong ctor=$ctor in ArgStruct, returning $argStruct")
-      makeHKTagFromStrongTpe(ctor)
+      makeHKTagFromStrongTpe[ArgStruct](ctor)
     } else {
       makeHKTagImpl(ctor, implicitly[c.WeakTypeTag[ArgStruct]])
     }
@@ -147,7 +147,7 @@ class TagMacro(val c: blackbox.Context) {
         // some of its arguments are type parameters that we should resolve
         case None =>
           logger.log(s"HK type A ctor=$ctorTpe sym=${ctorTpe.typeSymbol}")
-          makeHKTagFromStrongTpe(ctorTpe)
+          makeHKTagFromTpe(ctorTpe)
 
         // error: the entire type is just a proper type parameter with no type arguments
         // it cannot be resolved further
@@ -279,12 +279,16 @@ class TagMacro(val c: blackbox.Context) {
     res
   }
 
-  private[this] def makeHKTagFromStrongTpe[ArgStruct](strongCtorType: Type): c.Expr[HKTag[ArgStruct]] = {
+  private[this] def makeHKTagFromStrongTpe[ArgStruct: c.WeakTypeTag](strongCtorType: Type): c.Expr[HKTag[ArgStruct]] = {
     val ltag = ltagMacro.makeParsedLightTypeTagImpl(strongCtorType)
     val cls = closestClass(strongCtorType)
     c.Expr[HKTag[ArgStruct]] {
       q"_root_.izumi.reflect.HKTag.apply($cls, $ltag)"
     }
+  }
+
+  private[this] def makeHKTagFromTpe(strongCtorType: Type): c.Expr[HKTag[_]] = {
+    makeHKTagFromStrongTpe[Any](strongCtorType)
   }
 
   @inline
@@ -343,7 +347,7 @@ class TagMacro(val c: blackbox.Context) {
         // some of its arguments are type parameters that we should resolve
         case None =>
           logger.log(s"type A $ctor  ${ctor.typeSymbol}")
-          makeHKTagFromStrongTpe(ctor)
+          makeHKTagFromTpe(ctor)
 
         // error: the entire type is just a proper type parameter with no type arguments
         // it cannot be resolved further
