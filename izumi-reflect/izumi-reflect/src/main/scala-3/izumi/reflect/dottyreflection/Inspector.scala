@@ -258,8 +258,11 @@ abstract class Inspector(protected val shift: Int, val context: Queue[Inspector.
         makeNameReferenceFromSymbol(symbol, prefixSource)
 
       case s if s.isTypeDef =>
-        log(s"inspectSymbol: Found TypeDef symbol $s")
-        val rhs = s.typeRef._underlying
+        val rhs = outerTypeRef match {
+          case Some(r) if r.isOpaqueAlias => r._underlying
+          case _ => s.typeRef._underlying
+        }
+        log(s"inspectSymbol: Found TypeDef symbol $s (rhs=$rhs)")
         next().inspectTypeRepr(rhs, outerTypeRef)
 
       case s if s.isDefDef =>

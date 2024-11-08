@@ -79,6 +79,25 @@ class LightTypeTagTest extends SharedLightTypeTagTest {
       assertChildStrict(LTT[LightTypeTagTestT], LTT[String])
     }
 
+    "support opaque types" in {
+      object x {
+        type T >: List[Int] <: List[Int]
+        opaque type Opaque = List[Int]
+        opaque type OpaqueSub <: List[Int] = List[Int]
+      }
+
+      assertNotChildStrict(LTT[x.Opaque], LTT[List[Int]])
+      assertNotChildStrict(LTT[x.Opaque], LTT[Seq[Int]])
+      assertNotChildStrict(LTT[x.Opaque], LTT[x.T])
+      assertNotChildStrict(LTT[x.Opaque], LTT[x.OpaqueSub])
+
+      assertChildStrict(LTT[x.OpaqueSub], LTT[List[Int]])
+      assertChildStrict(LTT[x.OpaqueSub], LTT[Seq[Int]])
+      assertChildStrict(LTT[x.T], LTT[Seq[Int]])
+      assertChildStrict(LTT[x.OpaqueSub], LTT[x.T])
+      assertDifferent(LTT[x.OpaqueSub], LTT[x.T])
+    }
+
   }
 }
 
