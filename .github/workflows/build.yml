@@ -60,6 +60,8 @@ jobs:
         env:
           OPENSSL_IV: ${{ secrets.OPENSSL_IV }}
           OPENSSL_KEY: ${{ secrets.OPENSSL_KEY }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         run: |
           bash sbtgen.sc --js --native
           
@@ -69,6 +71,16 @@ jobs:
             openssl aes-256-cbc -K ${OPENSSL_KEY} -iv ${OPENSSL_IV} -in secrets.tar.enc -out secrets.tar -d
             tar xvf secrets.tar
             ln -s .secrets/local.sbt local.sbt
+            rm ./.secrets/credentials.sonatype-nexus.properties
+            
+            cat <<EOF > ./.secrets/credentials.sonatype-nexus.properties
+            realm=Sonatype Nexus Repository Manager
+            host=oss.sonatype.org
+            user=${SONATYPE_USERNAME}
+            password=${SONATYPE_PASSWORD}
+            EOF
+  
+  
             COMMAND="$COMMAND +publishSigned"
             if [[ "$CI_BRANCH_TAG" =~ ^v.*$ ]] ; then
               COMMAND="$COMMAND sonatypeBundleRelease"
