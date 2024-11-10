@@ -106,7 +106,9 @@ jobs:
           sed -i '/<!--- docs:start --->/d' docs/index.md
           sed -i '/<!--- docs:end --->/d' docs/index.md
       - name: Publish Docs to NPM Registry
-        run: sbt docs/publishToNpm
+        run: |
+          bash sbtgen.sc --js --native
+          sbt docs/publishToNpm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Notify the main repo about the new release of docs package
