@@ -72,14 +72,7 @@ jobs:
             tar xvf secrets.tar
             ln -s .secrets/local.sbt local.sbt
             rm ./.secrets/credentials.sonatype-nexus.properties
-            
-            cat <<EOF > ./.secrets/credentials.sonatype-nexus.properties
-            realm=Sonatype Nexus Repository Manager
-            host=oss.sonatype.org
-            user=${SONATYPE_USERNAME}
-            password=${SONATYPE_PASSWORD}
-            EOF
-  
+            printf "%s\n" "realm=Sonatype Nexus Repository Manager" "host=oss.sonatype.org" "user=${SONATYPE_USERNAME}" "password=${SONATYPE_PASSWORD}" > ./.secrets/credentials.sonatype-nexus.properties
   
             COMMAND="$COMMAND +publishSigned"
             if [[ "$CI_BRANCH_TAG" =~ ^v.*$ ]] ; then
