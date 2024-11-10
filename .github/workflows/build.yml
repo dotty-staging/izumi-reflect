@@ -51,7 +51,7 @@ jobs:
     if: needs.checksecret.outputs.HAVE_SECRETS == 'true'
     strategy:
       matrix:
-        java: [ '11' ]
+        java: [ '17' ]
     steps:
       - uses: 7mind/github-env@main
         with:
@@ -81,11 +81,11 @@ jobs:
     name: Release and Notify Docs
     runs-on: ubuntu-latest
     continue-on-error: false
-    needs: [ 'publish-artifacts' ]
+    needs: [ 'build', 'checksecret' ]
     if: ${{ ((github.event_name == 'release') && (github.event.action == 'published')) || (github.event_name == 'workflow_dispatch') }}
     strategy:
       matrix:
-        java: [ '11' ]
+        java: [ '17' ]
     steps:
       - uses: 7mind/github-env@main
         with:
