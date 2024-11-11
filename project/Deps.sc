@@ -26,7 +26,7 @@ object Izumi {
   final val scala211 = ScalaVersion("2.11.12")
   final val scala212 = ScalaVersion("2.12.19")
   final val scala213 = ScalaVersion("2.13.14")
-  final val scala300 = ScalaVersion("3.2.2")
+  final val scala300 = ScalaVersion("3.3.4")
 
   // launch with `./sbtgen.sc 2` to use 2.13 in Intellij
   var targetScala = Seq(scala300, scala213, scala212, scala211)
@@ -203,6 +203,7 @@ object Izumi {
         ),
         "mimaFailOnProblem" in SettingScope.Build := true,
         "mimaFailOnNoPrevious" in SettingScope.Build := false,
+        "useGpg" in SettingScope.Build := false,
 
         // scala-steward workaround
         // add sbtgen version to sbt build to allow scala-steward to find it and update it in .sc files
