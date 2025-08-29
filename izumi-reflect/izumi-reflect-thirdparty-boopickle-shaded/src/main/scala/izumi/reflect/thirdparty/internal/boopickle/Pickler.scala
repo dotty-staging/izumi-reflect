@@ -102,6 +102,31 @@ private[reflect] object BasicPicklers extends PicklerHelper with XCompatPicklers
   def OptionPickler[T: P]: P[Option[T]] = new P[Option[T]] {
     override def pickle(obj: Option[T])(implicit state: PickleState): Unit = {
       obj match {
+        case Some(x) =>
+          state.enc.writeInt(OptionSome.toInt)
+          write[T](x)
+        case None =>
+          // `None` is always encoded as zero
+          state.enc.writeInt(OptionNone.toInt)
+      }
+    }
+
+    override def unpickle(implicit state: UnpickleState): Option[T] = {
+      state.dec.readInt match {
+        case OptionSome =>
+          val o = Some(read[T])
+          o
+        case OptionNone =>
+          None
+        case _ =>
+          throw new IllegalArgumentException("Invalid coding for Option type")
+      }
+    }
+  }
+
+  def NullableOptionPickler[T: P]: P[Option[T] | Null] = new P[Option[T] | Null] {
+    override def pickle(obj: Option[T] | Null)(implicit state: PickleState): Unit = {
+      obj match {
         case null =>
           state.enc.writeInt(NullObject)
         case Some(x) =>
@@ -113,7 +138,7 @@ private[reflect] object BasicPicklers extends PicklerHelper with XCompatPicklers
       }
     }
 
-    override def unpickle(implicit state: UnpickleState): Option[T] = {
+    override def unpickle(implicit state: UnpickleState): Option[T] | Null = {
       state.dec.readInt match {
         case NullObject =>
           null
@@ -143,7 +168,7 @@ private[reflect] final class PickleState(val enc: Encoder, dedupImmutable: Boole
 
   /** Object reference for immutable pickled objects
     */
-  private[this] var immutableRefs: mutable.AnyRefMap[AnyRef, Int] = null
+  private[this] var immutableRefs: mutable.AnyRefMap[AnyRef, Int] | Null = null
   private[this] var immutableIdx = 2
 
   @inline def immutableRefFor(obj: AnyRef): Option[Int] = {
@@ -152,7 +177,7 @@ private[reflect] final class PickleState(val enc: Encoder, dedupImmutable: Boole
     else if (!dedupImmutable)
       None
     else if (immutableRefs != null)
-      immutableRefs.get(obj)
+      immutableRefs.nn.get(obj)
     else
       None
   }
@@ -161,7 +186,7 @@ private[reflect] final class PickleState(val enc: Encoder, dedupImmutable: Boole
     if (dedupImmutable) {
       if (immutableRefs == null)
         immutableRefs = mutable.AnyRefMap.empty
-      immutableRefs.update(obj, immutableIdx)
+      immutableRefs.nn.update(obj, immutableIdx)
       immutableIdx += 1
     }
   }

@@ -686,9 +686,9 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
       assertDifferent(Tag[DockerContainer[a.T]].tag, Tag[DockerContainer[b.T]].tag)
 
       val zy = new ZY {}
-      assert(zy.tagT.getMessage contains "could not find implicit value")
-      assert(zy.tagU.getMessage contains "could not find implicit value")
-      assert(zy.tagV.getMessage contains "could not find implicit value")
+      assert(zy.tagT.getMessage.nn contains "could not find implicit value")
+      assert(zy.tagU.getMessage.nn contains "could not find implicit value")
+      assert(zy.tagV.getMessage.nn contains "could not find implicit value")
       assert(zy.tagA.isSuccess)
     }
 

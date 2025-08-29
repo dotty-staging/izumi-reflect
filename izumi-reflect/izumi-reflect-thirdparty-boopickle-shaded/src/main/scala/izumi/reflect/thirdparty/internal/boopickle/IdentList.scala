@@ -31,7 +31,7 @@ private[reflect] abstract class IdentList {
 
 private[reflect] object IdentList {
 
-  private[boopickle] final class Entry(val obj: AnyRef, var next: Entry)
+  private[boopickle] final class Entry(val obj: AnyRef, var next: Entry | Null)
   private[boopickle] val maxSize = 32
 }
 
@@ -57,7 +57,7 @@ private[boopickle] final class IdentList1Plus(o1: AnyRef) extends IdentList {
     // first time something is looked up, we switch to the more efficient implementation
     switchOver = true
     var i = 0
-    var e = head
+    var e: Entry | Null = head
     while (i < idx && e != null) {
       i += 1
       e = e.next
@@ -88,10 +88,10 @@ private[boopickle] final class IdentListBig(first: IdentList.Entry, size: Int) e
   // transform the linked list into an array buffer
   val b = mutable.ArrayBuffer.newBuilder[AnyRef]
   b.sizeHint(size)
-  var e = first
+  var e: IdentList.Entry | Null = first
   while (e != null) {
-    b += e.obj
-    e = e.next
+    b += e.nn.obj
+    e = e.nn.next
   }
   val entries = b.result()
 

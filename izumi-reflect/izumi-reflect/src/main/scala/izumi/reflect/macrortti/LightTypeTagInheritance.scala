@@ -225,7 +225,7 @@ final class LightTypeTagInheritance(self: LightTypeTag, other: LightTypeTag) {
       && lins.iterator.zipAll(rins.iterator, null, null).forall {
         case (null, _) => false
         case (_, null) => false
-        case (l, r) => ctx.isChild(r, l) // contravariant
+        case (l, r) => ctx.isChild(r.nn, l.nn) // contravariant
       }
       && ctx.isChild(lout, rout)) // covariant
     case _ =>
