@@ -181,7 +181,7 @@ lazy val `izumi-reflect-thirdparty-boopickle-shaded` = crossProject(JVMPlatform,
         "-Wconf:msg=nowarn:silent"
       )
       case (_, _) => Seq(
-        "-Ykind-projector",
+        "-Xkind-projector",
         "-no-indent",
         "-language:implicitConversions"
       )
@@ -420,7 +420,7 @@ lazy val `izumi-reflect` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
         "-Wconf:msg=nowarn:silent"
       )
       case (_, _) => Seq(
-        "-Ykind-projector",
+        "-Xkind-projector",
         "-no-indent",
         "-language:implicitConversions"
       )

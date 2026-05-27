@@ -227,7 +227,7 @@ object Izumi {
               SettingKey(Some(scala212), None) := Defaults.Scala212Options.filterNot(removedOpts) ++ addedOpts,
               SettingKey(Some(scala213), None) := Defaults.Scala213Options.filterNot(removedOpts) ++ addedOpts,
               SettingKey.Default := Seq(
-                "-Ykind-projector",
+                "-Xkind-projector",
                 "-no-indent",
                 "-language:implicitConversions"
               )
