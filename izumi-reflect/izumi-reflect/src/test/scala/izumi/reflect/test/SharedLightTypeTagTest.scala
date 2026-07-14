@@ -670,12 +670,12 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
 
       assertTypeError("def x1[T] = LTag[Array[T]]")
       assertTypeError("def x1[T <: { type Array }] = LTag[T#Array]")
-      assertTypeError("def x1[T] = LTag[Array[Int] with List[T]]")
+      assertTypeError("def x1[T] = LTag[Array[Int] & List[T]]")
       assertTypeError("def x1[F[_]] = LTag[F[Int]]")
 
       assertCompiles("def x1 = { object x { type T }; def x1 = LTag[Array[x.T]]; () }")
       assertCompiles("def x1 = { object x { type T }; LTag[Array[Int] { type X = x.T }]; () }")
-      assertCompiles("def x1 = { object x { type T }; LTag[Array[Int] with List[x.T]]; () }")
+      assertCompiles("def x1 = { object x { type T }; LTag[Array[Int] & List[x.T]]; () }")
       assertCompiles("def x1 = { object x { type F[_] }; LTag[x.F[Int]]; () }")
       assertCompiles("def x1 = { object x { type F[_[_]]; type Id[A] = A }; LTag[x.F[x.Id]]; () }")
     }
