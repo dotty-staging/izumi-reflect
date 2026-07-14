@@ -15,7 +15,7 @@ trait InheritedModel {
   trait BlockingIO3[F[_, _, _]]
   type BlockingIO[F[_, _]] = BlockingIO3[λ[(R, E, A) => F[E, A]]]
 
-  type IntersectionBlockingIO[F[_, _], G[_, _]] = BlockingIO3[λ[(R, E, A) => F[E, A] with G[A, E]]]
+  type IntersectionBlockingIO[F[_, _], G[_, _]] = BlockingIO3[λ[(R, E, A) => F[E, A] & G[A, E]]]
 
   type RepeatedBlockingIO[F[_, _]] = BlockingIO3[λ[(R, E, A) => F[A, A]]]
   type RepeatedNonLambdaBlockingIO[F[_, _]] = BlockingIO3[λ[(R, E, A) => F[Int, Int]]]

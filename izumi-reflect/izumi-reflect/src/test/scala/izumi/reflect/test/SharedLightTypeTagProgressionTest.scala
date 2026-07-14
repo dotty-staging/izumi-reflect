@@ -109,7 +109,7 @@ abstract class SharedLightTypeTagProgressionTest extends TagAssertions with TagP
       val debugCombined = combined.debug("combined")
 
       val alias = LTT[T3[Int, Boolean]]
-      val direct = LTT[W1 with W4[Boolean] with W5[Int]]
+      val direct = LTT[W1 & W4[Boolean] & W5[Int]]
 
       brokenOnScala2 {
         assert(!debugCombined.contains("W4[=scala.Int]"))

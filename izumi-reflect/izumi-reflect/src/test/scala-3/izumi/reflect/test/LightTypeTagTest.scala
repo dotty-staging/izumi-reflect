@@ -32,13 +32,13 @@ class LightTypeTagTest extends SharedLightTypeTagTest {
   "lightweight type tags (Dotty)" should {
 
     "tautological intersections with Matchable are discarded from internal structure (Scala 3 specific, Matchable)" in {
-      assertSameStrict(LTT[Matchable with Option[String]], LTT[Option[String]])
-      assertDebugSame(LTT[Matchable with Option[String]], LTT[Option[String]])
+      assertSameStrict(LTT[Matchable & Option[String]], LTT[Option[String]])
+      assertDebugSame(LTT[Matchable & Option[String]], LTT[Option[String]])
     }
 
     "tautological intersections with Matchable are discarded from internal structure (Scala 3 specific, Matchable) (Tag)" in {
-      assertSameStrict(Tag[Matchable with Option[String]].tag, LTT[Option[String]])
-      assertDebugSame(Tag[Matchable with Option[String]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[Matchable & Option[String]].tag, LTT[Option[String]])
+      assertDebugSame(Tag[Matchable & Option[String]].tag, LTT[Option[String]])
     }
 
     "tautological unions with Any/AnyRef/Matchable/Object are discarded from internal structure (Scala 3 specific, Matchable)" in {

@@ -24,6 +24,6 @@ import scala.collection.mutable
 
 package object collections {
   @NowarnCompat.nowarn("msg=deprecated")
-  private[reflect] type MutableMultiMap[A, B] = mutable.HashMap[A, mutable.Set[B]] with mutable.MultiMap[A, B]
+  private[reflect] type MutableMultiMap[A, B] = mutable.HashMap[A, mutable.Set[B]] & mutable.MultiMap[A, B]
   private[reflect] type ImmutableMultiMap[A, B] = Map[A, Set[B]]
 }

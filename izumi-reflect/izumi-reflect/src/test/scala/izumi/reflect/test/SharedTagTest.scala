@@ -108,7 +108,7 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
       assert(Tag[With[Nothing]].tag == fromRuntime[With[Nothing]])
       assert(Tag[With[_]].tag == fromRuntime[With[_]])
 
-      assert(Tag[Int with String].tag == fromRuntime[Int with String])
+      assert(Tag[Int & String].tag == fromRuntime[Int & String])
 
       assert(Tag[str.type].tag == fromRuntime[str.type])
 
@@ -235,16 +235,16 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
     }
 
     "handle nested intersection aliases" in {
-      type Inner = Int with String
-      type Outer = Boolean with Inner
-      assertChild(Tag[Outer].tag, Tag[Boolean with Int with String].tag)
-      assertChild(Tag[Boolean with Int with String].tag, Tag[Outer].tag)
-      assertSame(Tag[Outer].tag, Tag[Boolean with Int with String].tag)
+      type Inner = Int & String
+      type Outer = Boolean & Inner
+      assertChild(Tag[Outer].tag, Tag[Boolean & Int & String].tag)
+      assertChild(Tag[Boolean & Int & String].tag, Tag[Outer].tag)
+      assertSame(Tag[Outer].tag, Tag[Boolean & Int & String].tag)
 
-      assertNotChild(Tag[Outer].tag, Tag[Boolean with Int with String with Unit].tag)
-      assertNotChild(Tag[Boolean with Int with String].tag, Tag[Outer with Unit].tag)
+      assertNotChild(Tag[Outer].tag, Tag[Boolean & Int & String & Unit].tag)
+      assertNotChild(Tag[Boolean & Int & String].tag, Tag[Outer & Unit].tag)
 
-      assertChild(Tag[Boolean with Int with String].tag, Tag[CharSequence].tag)
+      assertChild(Tag[Boolean & Int & String].tag, Tag[CharSequence].tag)
       assertChild(Tag[Outer].tag, Tag[CharSequence].tag)
 
       // there should be no refinements or intersections in bases
@@ -254,14 +254,14 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
     }
 
     "handle nested refined intersection aliases" in {
-      type Inner = ((Int with (String {})) {}) @IdAnnotation("y")
-      type Outer = Boolean with (((Inner {}) @IdAnnotation("x")) {})
-      assertChild(Tag[Outer].tag, Tag[Boolean with Int with String].tag)
-      assertChild(Tag[Boolean with Int with String].tag, Tag[Outer].tag)
-      assertSame(Tag[Outer].tag, Tag[Boolean with Int with String].tag)
+      type Inner = ((Int & (String {})) {}) @IdAnnotation("y")
+      type Outer = Boolean & (((Inner {}) @IdAnnotation("x")) {})
+      assertChild(Tag[Outer].tag, Tag[Boolean & Int & String].tag)
+      assertChild(Tag[Boolean & Int & String].tag, Tag[Outer].tag)
+      assertSame(Tag[Outer].tag, Tag[Boolean & Int & String].tag)
 
-      assertNotChild(Tag[Outer].tag, Tag[Boolean with Int with String with Unit].tag)
-      assertNotChild(Tag[Boolean with Int with String].tag, Tag[Outer with Unit].tag)
+      assertNotChild(Tag[Outer].tag, Tag[Boolean & Int & String & Unit].tag)
+      assertNotChild(Tag[Boolean & Int & String].tag, Tag[Outer & Unit].tag)
 
       assertChild(Tag[Outer].tag, Tag[CharSequence].tag)
 
@@ -452,11 +452,11 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
     }
 
     "combine intersection types" in {
-      def t1[A: Tag] = Tag[String with A]
-      def t2[A: Tag, B: Tag] = Tag[A with B]
+      def t1[A: Tag] = Tag[String & A]
+      def t2[A: Tag, B: Tag] = Tag[A & B]
 
-      assertSameStrict(t1[Int].tag, Tag[Int with String].tag)
-      assertSameStrict(t2[Int, String].tag, Tag[String with Int].tag)
+      assertSameStrict(t1[Int].tag, Tag[Int & String].tag)
+      assertSameStrict(t2[Int, String].tag, Tag[String & Int].tag)
       assertSameStrict(t1[String].tag, Tag[String].tag)
       assertSameStrict(t2[String, String].tag, Tag[String].tag)
     }
@@ -641,14 +641,14 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
     }
 
     "return expected class tag" in {
-      assert(Tag[List[_] with Set[_]].closestClass eq classOf[scala.collection.immutable.Iterable[_]])
-      assert(!Tag[List[_] with Set[_]].hasPreciseClass)
+      assert(Tag[List[_] & Set[_]].closestClass eq classOf[scala.collection.immutable.Iterable[_]])
+      assert(!Tag[List[_] & Set[_]].hasPreciseClass)
 
       assert(Tag[AnyVal].closestClass eq classOf[AnyVal])
       assert(!Tag[AnyVal].hasPreciseClass)
 
       assert(Tag[String].closestClass ne classOf[AnyVal])
-      assert(!Tag[String with Int].hasPreciseClass)
+      assert(!Tag[String & Int].hasPreciseClass)
 
       assert(Tag[List[Int]].closestClass eq classOf[List[_]])
       assert(Tag[List[Int]].hasPreciseClass)
@@ -902,8 +902,8 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
       assertSameStrict(Tag[{ def a: Int; def g: Boolean }].tag, fromRuntime[{ def a: Int; def g: Boolean }])
       assertSameStrict(Tag[Int { def a: Int }].tag, fromRuntime[Int { def a: Int }])
 
-      assertSameStrict(Tag[With[str.type] with ({ type T = str.type with Int })].tag, fromRuntime[With[str.type] with ({ type T = str.type with Int })])
-      assertNotChildStrict(Tag[With[str.type] with ({ type T = str.type with Int })].tag, fromRuntime[With[str.type] with ({ type T = str.type with Long })])
+      assertSameStrict(Tag[With[str.type] & ({ type T = str.type & Int })].tag, fromRuntime[With[str.type] & ({ type T = str.type & Int })])
+      assertNotChildStrict(Tag[With[str.type] & ({ type T = str.type & Int })].tag, fromRuntime[With[str.type] & ({ type T = str.type & Long })])
     }
 
     "Work for any abstract type with available Tag while preserving additional type refinement" in {
@@ -1036,19 +1036,19 @@ abstract class SharedTagTest extends AnyWordSpec with XY[String] with TagAsserti
     }
 
     "eradicate intersection tautologies with Any/Object (Tag)" in {
-      assertSameStrict(Tag[Any with Option[String]].tag, LTT[Option[String]])
-      assertSameStrict(Tag[AnyRef with Option[String]].tag, LTT[Option[String]])
-      assertSameStrict(Tag[Object with Option[String]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[Any & Option[String]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[AnyRef & Option[String]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[Object & Option[String]].tag, LTT[Option[String]])
     }
 
     "tautological intersections with Any/Object are discarded from internal structure (Tag)" in {
-      assertSameStrict(Tag[(Object {}) @IdAnnotation("x") with Option[(String with Object) {}]].tag, LTT[Option[String]])
-      assertSameStrict(Tag[(Any {}) @IdAnnotation("x") with Option[(String with Object) {}]].tag, LTT[Option[String]])
-      assertSameStrict(Tag[(AnyRef {}) @IdAnnotation("x") with Option[(String with Object) {}]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[(Object {}) @IdAnnotation("x") & Option[(String & Object) {}]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[(Any {}) @IdAnnotation("x") & Option[(String & Object) {}]].tag, LTT[Option[String]])
+      assertSameStrict(Tag[(AnyRef {}) @IdAnnotation("x") & Option[(String & Object) {}]].tag, LTT[Option[String]])
 
-      assertDebugSame(Tag[(Object {}) @IdAnnotation("x") with Option[(String with Object) {}]].tag, LTT[Option[String]])
-      assertDebugSame(Tag[(Any {}) @IdAnnotation("x") with Option[(String with Object) {}]].tag, LTT[Option[String]])
-      assertDebugSame(Tag[(AnyRef {}) @IdAnnotation("x") with Option[(String with Object) {}]].tag, LTT[Option[String]])
+      assertDebugSame(Tag[(Object {}) @IdAnnotation("x") & Option[(String & Object) {}]].tag, LTT[Option[String]])
+      assertDebugSame(Tag[(Any {}) @IdAnnotation("x") & Option[(String & Object) {}]].tag, LTT[Option[String]])
+      assertDebugSame(Tag[(AnyRef {}) @IdAnnotation("x") & Option[(String & Object) {}]].tag, LTT[Option[String]])
     }
 
   }

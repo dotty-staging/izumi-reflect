@@ -172,14 +172,14 @@ abstract class SharedTagProgressionTest extends AnyWordSpec with TagAssertions w
     // but this would make such tags expensive to construct because the complexity is quadratic, with two <:< calls
     // per iteration.
     "progression test: fails on Scala 3 don't lose tautological intersection components other than Any/AnyRef" in {
-      def tag1[T: Tag]: Tag[T with Trait1] = Tag[T with Trait1]
-      def tag4[T: Tag]: Tag[T with Trait4] = Tag[T with Trait4]
+      def tag1[T: Tag]: Tag[T & Trait1] = Tag[T & Trait1]
+      def tag4[T: Tag]: Tag[T & Trait4] = Tag[T & Trait4]
 
       val t1 = tag1[Trait3[Dep]].tag
       val t2 = tag4[Trait3[Dep]].tag
 
-      val t10 = Tag[Trait3[Dep] with Trait1].tag
-      val t20 = Tag[Trait3[Dep] with Trait4].tag
+      val t10 = Tag[Trait3[Dep] & Trait1].tag
+      val t20 = Tag[Trait3[Dep] & Trait4].tag
 
       brokenOnScala3 {
         assertSameStrict(t1, t10)
@@ -193,7 +193,7 @@ abstract class SharedTagProgressionTest extends AnyWordSpec with TagAssertions w
     // We don't really want to fix it, because removing tautologies is quadratic, with two subtyping comparisions per step!
     // Would make construction really expensive, all for an extremely rare corner case
     "progression test: intersection tautologies are not removed automatically when constructing combined intersection type" in {
-      def tag1[T: Tag]: Tag[T with Trait1] = Tag[T with Trait1]
+      def tag1[T: Tag]: Tag[T & Trait1] = Tag[T & Trait1]
 
       val t1 = tag1[Trait3[Dep]].tag
 

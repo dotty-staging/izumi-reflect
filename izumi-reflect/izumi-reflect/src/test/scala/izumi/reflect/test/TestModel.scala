@@ -76,7 +76,7 @@ object TestModel {
 
   trait W5[B] extends W2
 
-  type T3[A, B] = W5[A] with W4[B] with W1
+  type T3[A, B] = W5[A] & W4[B] & W1
 
   trait I1
 
@@ -165,7 +165,7 @@ object TestModel {
 
   trait CIO[+A]
   object x {
-    type SrcContextProcessor[F[_]] = SrcProcessor with ContextProcessor[F]
+    type SrcContextProcessor[F[_]] = SrcProcessor & ContextProcessor[F]
   }
   trait SrcProcessor
   trait ContextProcessor[F[_]]

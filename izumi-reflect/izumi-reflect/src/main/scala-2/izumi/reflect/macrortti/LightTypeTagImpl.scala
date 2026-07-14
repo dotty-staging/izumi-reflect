@@ -76,7 +76,7 @@ object LightTypeTagImpl {
 
 }
 
-final class LightTypeTagImpl[U <: Universe with Singleton](val u: U, withCache: Boolean, logger: TrivialLogger) {
+final class LightTypeTagImpl[U <: Universe & Singleton](val u: U, withCache: Boolean, logger: TrivialLogger) {
 
   import u._
 

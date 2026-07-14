@@ -12,8 +12,8 @@ class TagProgressionTest extends SharedTagProgressionTest {
         type T
         implicit def tag: Tag[T]
 
-        def badCombine(that: PDT): Tag[T with that.T] = {
-          Tag[T with that.T]
+        def badCombine(that: PDT): Tag[T & that.T] = {
+          Tag[T & that.T]
         }
       }
       broken {
@@ -34,7 +34,7 @@ class TagProgressionTest extends SharedTagProgressionTest {
 
       val badCombine = PDT[Int].badCombine(PDT[Unit])
       broken {
-        assertSameStrict(badCombine.tag, Tag[Int with Unit].tag)
+        assertSameStrict(badCombine.tag, Tag[Int & Unit].tag)
       }
     }
 

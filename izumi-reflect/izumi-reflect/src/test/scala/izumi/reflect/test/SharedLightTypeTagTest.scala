@@ -57,18 +57,18 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
     }
 
     "eradicate intersection tautologies with Any/Object" in {
-      assertSameStrict(LTT[Any with Option[String]], LTT[Option[String]])
-      assertSameStrict(LTT[AnyRef with Option[String]], LTT[Option[String]])
-      assertSameStrict(LTT[Object with Option[String]], LTT[Option[String]])
+      assertSameStrict(LTT[Any & Option[String]], LTT[Option[String]])
+      assertSameStrict(LTT[AnyRef & Option[String]], LTT[Option[String]])
+      assertSameStrict(LTT[Object & Option[String]], LTT[Option[String]])
     }
 
     "do not eradicate intersections with Nothing" in {
-      assertDifferent(LTT[Nothing with Option[String]], LTT[Option[String]])
-      assertSameStrict(LTT[Nothing with Option[String]], LTT[Option[String] with Nothing])
+      assertDifferent(LTT[Nothing & Option[String]], LTT[Option[String]])
+      assertSameStrict(LTT[Nothing & Option[String]], LTT[Option[String] & Nothing])
     }
 
     "eradicate self-intersection (X with X)" in {
-      assertSameStrict(`LTT`[String with String], `LTT`[String])
+      assertSameStrict(`LTT`[String & String], `LTT`[String])
     }
 
     "support subtype checks" in {
@@ -171,23 +171,23 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
     }
 
     "intersections are associative" in {
-      type F1 = (W3[Int] with W1) with I1
-      type F2 = W3[Int] with (W1 with I1)
+      type F1 = (W3[Int] & W1) & I1
+      type F2 = W3[Int] & (W1 & I1)
 
-      type T1[A] = (W3[A] with W1) with I1
-      type T2[A] = W3[A] with (W1 with I1)
+      type T1[A] = (W3[A] & W1) & I1
+      type T2[A] = W3[A] & (W1 & I1)
 
       assertSameStrict(LTT[F1], LTT[F2])
       assertSameStrict(`LTT[_]`[T1], `LTT[_]`[T2])
     }
 
     "runtime-combined intersections are associative" in {
-      type F1 = W3[Int] with W1
-      type F11 = (W3[Int] with W1) with I1
-      type F12 = W3[Int] with (W1 with I1)
+      type F1 = W3[Int] & W1
+      type F11 = (W3[Int] & W1) & I1
+      type F12 = W3[Int] & (W1 & I1)
 
-      type T1[A] = W3[Int] with (W1 with A)
-      type T2[A] = (W3[Int] with W1) with A
+      type T1[A] = W3[Int] & (W1 & A)
+      type T2[A] = (W3[Int] & W1) & A
 
       assertIntersection(List(LTT[F1], LTT[I1]), LTT[F11])
       assertIntersection(List(LTT[F1], LTT[I1]), LTT[F12])
@@ -336,9 +336,9 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
       assertChild(LTT[J[Option]], LTT[J1[Option]])
       assertChild(LTT[J[Option]], LTT[J3])
       assertChild(LTT[J[Option]], LTT[J2])
-      assertChild(LTT[J[Option]], LTT[J1[Option] with J2])
-      assertChild(LTT[J[Option]], LTT[J2 with J3])
-      assertChild(LTT[J[Option]], LTT[J1[Option] with J2 with J3])
+      assertChild(LTT[J[Option]], LTT[J1[Option] & J2])
+      assertChild(LTT[J[Option]], LTT[J2 & J3])
+      assertChild(LTT[J[Option]], LTT[J1[Option] & J2 & J3])
     }
 
     "support LTagK* family summoners" in {
@@ -349,8 +349,8 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
     }
 
     "support higher-kinded intersection type equality" in {
-      type T1[A] = W3[A] with W1
-      type T2[A] = W4[A] with W2
+      type T1[A] = W3[A] & W1
+      type T2[A] = W4[A] & W2
 
       assertSame(`LTT[_]`[T1], `LTT[_]`[T1])
       assertDifferent(`LTT[_]`[T1], `LTT[_]`[T2])
@@ -371,20 +371,20 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
 
       assertCombine(`LTT[_[_[_],_[_]]]`[T2], `LTT[_[_],_[_]]`[T0], LTT[T2[T0]])
 
-      type ComplexRef[T] = W1 with T { def a(p: T): T; type M = T }
-      assertCombine(`LTT[_]`[ComplexRef], LTT[Int], LTT[W1 with Int { def a(p: Int): Int; type M = Int }])
+      type ComplexRef[T] = W1 & T { def a(p: T): T; type M = T }
+      assertCombine(`LTT[_]`[ComplexRef], LTT[Int], LTT[W1 & Int { def a(p: Int): Int; type M = Int }])
 
       assertCombine(`LTT[_[_]]`[({ type l[K[_]] = T0[Id, K] })#l], `LTT[_]`[FP], LTT[T0[Id, FP]])
     }
 
     "tautological intersections with Any/Object are discarded from internal structure" in {
-      assertSameStrict(LTT[(Object {}) @IdAnnotation("x") with Option[(String with Object) {}]], LTT[Option[String]])
-      assertSameStrict(LTT[(Any {}) @IdAnnotation("x") with Option[(String with Object) {}]], LTT[Option[String]])
-      assertSameStrict(LTT[(AnyRef {}) @IdAnnotation("x") with Option[(String with Object) {}]], LTT[Option[String]])
+      assertSameStrict(LTT[(Object {}) @IdAnnotation("x") & Option[(String & Object) {}]], LTT[Option[String]])
+      assertSameStrict(LTT[(Any {}) @IdAnnotation("x") & Option[(String & Object) {}]], LTT[Option[String]])
+      assertSameStrict(LTT[(AnyRef {}) @IdAnnotation("x") & Option[(String & Object) {}]], LTT[Option[String]])
 
-      assertDebugSame(LTT[(Object {}) @IdAnnotation("x") with Option[(String with Object) {}]], LTT[Option[String]])
-      assertDebugSame(LTT[(Any {}) @IdAnnotation("x") with Option[(String with Object) {}]], LTT[Option[String]])
-      assertDebugSame(LTT[(AnyRef {}) @IdAnnotation("x") with Option[(String with Object) {}]], LTT[Option[String]])
+      assertDebugSame(LTT[(Object {}) @IdAnnotation("x") & Option[(String & Object) {}]], LTT[Option[String]])
+      assertDebugSame(LTT[(Any {}) @IdAnnotation("x") & Option[(String & Object) {}]], LTT[Option[String]])
+      assertDebugSame(LTT[(AnyRef {}) @IdAnnotation("x") & Option[(String & Object) {}]], LTT[Option[String]])
     }
 
     "wildcards are supported" in {
@@ -529,7 +529,7 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
       val debugCombined = combined.debug("combined")
 
       val alias = LTT[T3[Int, Boolean]]
-      val direct = LTT[W1 with W4[Boolean] with W5[Int]]
+      val direct = LTT[W1 & W4[Boolean] & W5[Int]]
 
       assert(!debugCtor.contains("<refinement>"))
       assert(!debugCtor.contains("<none>"))
@@ -581,11 +581,11 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
     }
 
     "support higher-kinded intersection type subtyping" in {
-      type F1 = W3[Int] with W1
-      type F2 = W4[Int] with W2
+      type F1 = W3[Int] & W1
+      type F2 = W4[Int] & W2
 
-      type T1[A] = W3[A] with W1
-      type T2[A] = W4[A] with W2
+      type T1[A] = W3[A] & W1
+      type T2[A] = W4[A] & W2
 
       val f1 = LTT[F1]
       val f2 = LTT[F2]
@@ -610,7 +610,7 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
 
       val combined = tCtor.combine(LTT[Int], LTT[Boolean])
       val alias = LTT[T3[Int, Boolean]]
-      val direct = LTT[W1 with W4[Boolean] with W5[Int]]
+      val direct = LTT[W1 & W4[Boolean] & W5[Int]]
 
       assertChild(alias, direct)
       assertChild(combined, alias)
@@ -630,12 +630,12 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
       assertChild(combined, LTT[W3[Boolean]])
       assertChild(combined, LTT[W1])
       assertChild(combined, LTT[W2])
-      assertChild(combined, LTT[W1 with W3[Boolean]])
+      assertChild(combined, LTT[W1 & W3[Boolean]])
 
       assertNotChild(combined, LTT[W4[Int]])
       assertNotChild(combined, LTT[W3[Int]])
       assertNotChild(combined, LTT[W5[Boolean]])
-      assertNotChild(combined, LTT[W1 with W5[Boolean]])
+      assertNotChild(combined, LTT[W1 & W5[Boolean]])
     }
 
     "support structural & refinement type subtype checks" in {
@@ -653,7 +653,7 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
     }
 
     "support structural & refinement type equality" in {
-      assertDifferent(LTT[W4[str.type] with ({ type T = str.type with Int })], LTT[W4[str.type] with ({ type T = str.type with Long })])
+      assertDifferent(LTT[W4[str.type] & ({ type T = str.type & Int })], LTT[W4[str.type] & ({ type T = str.type & Long })])
 
       type C1 = C
       assertSame(LTT[{ def a: Int }], LTT[{ def a: Int }])
@@ -723,7 +723,7 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
     }
 
     "what about non-empty refinements with intersections" in {
-      val ltt = LTT[Int with Object with Option[String] { def a: Boolean }]
+      val ltt = LTT[Int & Object & Option[String] { def a: Boolean }]
       val debug = ltt.debug()
       assert(!debug.contains("<refinement>"))
       assert(!debug.contains("<none>"))
@@ -760,7 +760,7 @@ abstract class SharedLightTypeTagTest extends TagAssertions {
         || (txUnitTag.toString
         == "(Int {def a(String): Int, def b(): String, type M1 = TestModel::W1, type M2 = M2|<Nothing..TestModel::W2>, type M3 = λ %0 → Either[+Unit,+0]})")
       )
-      assertRepr(LTT[I1 with (I1 with (I1 with W1))], "{TestModel::I1 & TestModel::W1}")
+      assertRepr(LTT[I1 & (I1 & (I1 & W1))], "{TestModel::I1 & TestModel::W1}")
       assertRepr(`LTT[_]`[R1], "λ %0 → TestModel::R1[=0]")
       assertRepr(`LTT[_]`[Nothing], "Nothing")
       assertRepr(LTT[Int], "Int")
